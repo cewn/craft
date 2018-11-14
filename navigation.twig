@@ -25,7 +25,7 @@
                         <div class="{{ subNavBlock }}{% if navLevel > 0 %} {{subNavBlock ~ modName }}{% endif %}">
                             {# Additional wrapper #}
                             <div class="{{ subNavBlock }}__wrap">
-                                {# Elements #}
+                                {# Render nav children #}
                                 <ul class="{{ navSection }}{% if navLevel > 0 %} {{navSection ~ modName }}{% endif %}">
                                     {% children %}
                                 </ul>

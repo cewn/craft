@@ -1,7 +1,6 @@
 <nav>
     {% set navSection = 'headerNav' %}
     {% set navElement = '__item' %}
-    {% set subNavBlock = 'headerSubnav' %}
     {% set levelPrefix = '--level' %}
 
     <ul class="{{ navSection }}">

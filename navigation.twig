@@ -1,14 +1,17 @@
-<nav>
-    {% set navSection = 'headerNav' %}
-    {% set navElement = '__item' %}
-    {% set subNavBlock = 'headerSubNav' %}
-    {% set levelPrefix = '--level' %}
+{# Define nav vars #}
+{% set navSection = 'headerNav' %}
+{% set navElement = '__item' %}
+{% set subNavBlock = 'headerSubNav' %}
+{% set levelPrefix = '--level' %}
 
-    <ul class="{{ navSection }}">
-        {% set headerNavEntries = craft.entries.section(navSection).all() ?? null %}
-            {% if headerNavEntries %}
+{# Set the section based on the navSection var above #}
+{% set headerNavEntries = craft.entries.section(navSection).all() ?? null %}
+
+{% if headerNavEntries %}
+    <nav>
+        <ul class="{{ navSection }}">
             {% nav entry in headerNavEntries %}
-
+            
                 <li class="{{ navSection ~ navElement }}">
                     <a href="{{ entry.navLink[0].getUrl() }}" class="{{ navSection }}__itemLink">{{ entry.title }}</a>
                     {# Check for children #}
@@ -26,23 +29,14 @@
                                 <ul class="{{ navSection }}{% if navLevel > 0 %} {{navSection ~ modName }}{% endif %}">
                                     {% children %}
                                 </ul>
-
-                                <div class="{{ subNavBlock }}__aside">
-                                    <strong>Museum More</strong><br>
-                                    Hoofdstraat 28<br>
-                                    7213 CW Gorssel
-                                    <div class="{{ subNavBlock }}__contactInfo">
-                                        0575 760 300<br>
-                                        <a href="mailto:info@museummore.nl">info@museummore.nl</a>
-                                    </div>
-                                </div>
                                 {# / Elements #}
                             </div>
                         </div>
                     {% endifchildren %}
+                    
                 </li>
-
+                
             {% endnav %}
-        {% endif %}
-    </ul>
-</nav>
+        </ul>
+    </nav>
+{% endif %}

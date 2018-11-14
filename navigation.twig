@@ -16,7 +16,7 @@
                     <a href="{{ entry.navLink[0].getUrl() }}" class="{{ navSection }}__itemLink">{{ entry.title }}</a>
                     {# Check for children #}
                     {% ifchildren %}
-
+                    
                         {% set navLevel = entry.level ?? null %}
                         {# Combine levelPrefix string with current entry.level #}
                         {% set modName = levelPrefix ~ navLevel %}
@@ -32,6 +32,7 @@
                                 {# / Elements #}
                             </div>
                         </div>
+                        
                     {% endifchildren %}
                     
                 </li>

@@ -1,0 +1,48 @@
+<nav>
+    {% set navSection = 'headerNav' %}
+    {% set navElement = '__item' %}
+    {% set subNavBlock = 'headerSubNav' %}
+    {% set levelPrefix = '--level' %}
+
+    <ul class="{{ navSection }}">
+        {% set headerNavEntries = craft.entries.section(navSection).all() ?? null %}
+            {% if headerNavEntries %}
+            {% nav entry in headerNavEntries %}
+
+                <li class="{{ navSection ~ navElement }}">
+                    <a href="{{ entry.navLink[0].getUrl() }}" class="{{ navSection }}__itemLink">{{ entry.title }}</a>
+                    {# Check for children #}
+                    {% ifchildren %}
+
+                        {% set navLevel = entry.level ?? null %}
+                        {# Combine levelPrefix string with current entry.level #}
+                        {% set modName = levelPrefix ~ navLevel %}
+
+                        {# Set BEM level classes #}
+                        <div class="{{ subNavBlock }}{% if navLevel > 0 %} {{subNavBlock ~ modName }}{% endif %}">
+                            {# Additional wrapper #}
+                            <div class="{{ subNavBlock }}__wrap">
+                                {# Elements #}
+                                <ul class="{{ navSection }}{% if navLevel > 0 %} {{navSection ~ modName }}{% endif %}">
+                                    {% children %}
+                                </ul>
+
+                                <div class="{{ subNavBlock }}__aside">
+                                    <strong>Museum More</strong><br>
+                                    Hoofdstraat 28<br>
+                                    7213 CW Gorssel
+                                    <div class="{{ subNavBlock }}__contactInfo">
+                                        0575 760 300<br>
+                                        <a href="mailto:info@museummore.nl">info@museummore.nl</a>
+                                    </div>
+                                </div>
+                                {# / Elements #}
+                            </div>
+                        </div>
+                    {% endifchildren %}
+                </li>
+
+            {% endnav %}
+        {% endif %}
+    </ul>
+</nav>

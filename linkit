@@ -1,0 +1,7 @@
+{# Link It fix for empty customText #}
+{% set linkitField, buttonText = entry.ctaButton, null %}
+{% if linkitField.customText is empty %}
+  {% set buttonText = linkitField.text %}
+{% else %}
+  {% set buttonText = linkitField.getText %}
+{% endif %}

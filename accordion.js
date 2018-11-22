@@ -1,15 +1,16 @@
-let accordionCollection = document.getElementsByClassName('accordion__item');
+let accordionCollection = document.getElementsByClassName('accordion__trigger');
 let accordionItems = Array.from(accordionCollection);
-let accordionTransition = 'transition: all .6s ease';
+let accordionTransition = 'transition: all .6s cubic-bezier(.5, .5 , 0, 1)';
 
 accordionItems.forEach(function(accordionItem) {
     accordionItem.addEventListener('click', function() {
-    let child = accordionItem.querySelector('.accordion__content');
-
+    let child = accordionItem.parentNode.querySelector('.accordion__content');
         // Height not set
         if( child.style.height.indexOf('%') === -1 ) {
+            accordionItem.parentNode.classList.add('is-open');
             child.style = 'height: '+child.scrollHeight+'px; '+accordionTransition+'';
         } else {
+            accordionItem.parentNode.classList.remove('is-open');
             // Set height
             child.style = 'height: '+child.scrollHeight+'px; transition: none;';
             // Wait and clear

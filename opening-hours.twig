@@ -1,0 +1,86 @@
+{% macro render() %}
+    {%- set timeZone = craft.app.getTimezone ?? false -%}
+    {%- set timeFormat = craft.app.locale.getTimeFormat('short', 'php') ?? 'H:i' -%}
+    {%- set openingTable = globalOpenings.openingHours -%}
+    {%- set openingOptions = globalOpenings.openingOptions -%}
+
+    {%- if openingTable is defined and openingTable|length -%}
+
+        {% block style %}
+            <link rel="stylesheet" href="macros/opening-hours/style.css"> 
+        {% endblock %}
+
+        <div class="openingHours">
+            {%- set openHours, closeHours, openIndex = openingTable[0][7:], openingTable[1][7:], 0 -%}
+            {%- for open in openHours -%}
+                {%- set openIndex = openIndex + 1 -%}
+                {% if not openingOptions.contains('hideClosedDays') or open != null %}
+                    {% set exceptions = [] %}
+                    {%- for exception in globalOpenings.openingExceptions -%}
+                        {% if exception.date != null and exception.date|date('N') == openIndex and 'now'|date('Ymd') <= exception.date|date('Ymd') %}
+                            {% set exceptions = exceptions|merge([exception.date|date('j F')]) %}   
+                        {% endif %}         
+                    {%- endfor -%}
+                    <{% if exceptions %}button data-toggle-content="{{ 'Met uitzondering op:'|translate ~ ' ' }}{{ exceptions|join(', ') }}"
+                    {% else %}div{% endif %} class="openingHours__row">
+                        <div class="openingHours__day">
+                            {{- 'sunday'|date_modify('+'~ loop.index  ~' day')|date('l') -}}
+                            {% if exceptions %}                                
+                                <svg class="openingHours__icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                                    <path fill="currentColor" d="M12 2c5.514 0 10 4.486 10 10s-4.486 10-10 10-10-4.486-10-10 4.486-10 10-10zm0-2c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm-1.31 7.526c-.099-.807.528-1.526 1.348-1.526.771 0 1.377.676 1.28 1.451l-.757 6.053c-.035.283-.276.496-.561.496s-.526-.213-.562-.496l-.748-5.978zm1.31 10.724c-.69 0-1.25-.56-1.25-1.25s.56-1.25 1.25-1.25 1.25.56 1.25 1.25-.56 1.25-1.25 1.25z"/>
+                                </svg>  
+                            {% endif %}
+                        </div>
+                        <time class="openingHours__time">
+                            {%- if open != null -%}
+                                {{- open|time(timeFormat, false) -}}
+                                {%- for close in closeHours -%}
+                                    {%- if loop.index == openIndex and close != null -%}
+                                        {{ " - " ~ close|time(timeFormat, false) }}
+                                    {%- endif -%}
+                                {%- endfor -%}
+                            {%- else -%}
+                                {{- "gesloten"|translate -}}
+                            {%- endif -%}
+                        </time>
+                    </{% if exceptions %}button{% else %}div{% endif %}>
+                {% endif %}
+            {%- endfor -%}
+        </div>
+    {%- else -%}
+        The required openingHours table doens't exist in this back-end.
+    {%- endif -%}
+{% endmacro render %}    
+
+{% macro status(openMessage, closedMessage) %}
+    {%- set timeZone = craft.app.getTimezone ?? false -%}
+    {%- set timeFormat = craft.app.locale.getTimeFormat('short', 'php') ?? 'H:i' -%}
+    {%- set openingTable = globalOpenings.openingHours -%}
+    
+    {%- if openingTable is defined and openingTable|length -%}
+        {%- set openHours, closeHours = openingTable[0][:7], openingTable[1][7:] -%}
+        {%- for open in openHours -%}
+            {%- if loop.index == 'now'|date('N') -%}    
+                {%- if  open != null and 'now'|time(timeFormat, timeZone) >= open|time(timeFormat, false) -%}
+                    {% set exceptions = [] %}
+                    {%- for exception in globalOpenings.openingExceptions -%}
+                        {%  if exception.date != null and exception.date|date('dmY') == 'now'|date('dmY') and 'now'|date('dmY') <= exception.date|date('dmY') %}
+                            {% set exceptions = exceptions|merge([exception.date|date('j F')]) %}   
+                        {% endif %}         
+                    {%- endfor -%}
+                    {%- for close in closeHours -%}
+                        {% if loop.index == 'now'|date('N') %}
+                            {% if exceptions == null and 'now'|time(timeFormat, timeZone) <= close|time(timeFormat, false) and 'now'|time(timeFormat, timeZone) >= open|time(timeFormat, false) %}
+                                {{ openMessage|raw }}
+                            {% else %} 
+                                {{ closedMessage|raw }}
+                            {% endif %}
+                        {% endif %}
+                    {%- endfor -%}
+                {%- else -%}
+                    {{ closedMessage|raw }}
+                {% endif %}
+            {%- endif -%}
+        {%- endfor -%}
+    {%- endif -%}
+{% endmacro status %}

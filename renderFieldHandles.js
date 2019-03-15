@@ -95,7 +95,6 @@ if( typeof window.Craft !== 'undefined' && window.Craft.username ) {
 		fieldHandles.forEach(function(fieldHandle) {
 		    document.addEventListener('click', function(e) {
 		    	if( e.target && e.target.className === fieldHandle.className ) {
-		    		console.log('yay!')
 						var legend = e.target.parentNode.querySelector('.legendLabel');
 						var legendText = legend.textContent;
 						

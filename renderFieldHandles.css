@@ -1,0 +1,45 @@
+.fieldset {
+	display: none;
+  padding: 0 4px;
+  margin: 0;
+  border-radius: 4px;
+  padding: 2px 4px;
+  margin: 0 0 8px;
+}
+
+.showHandles .fieldset {
+  display: block;
+}
+
+.fieldset legend {
+	padding: 0 8px;
+}
+
+.fieldHandle {
+  display: block;
+  padding: 4px 8px;
+  color: inherit;
+  box-sizing: border-box;
+  width: 100%;
+  letter-spacing: 1px;
+  min-height: 0;
+  cursor: pointer;
+  border: 0;
+  line-height: 100%;
+  font-size: 13px;
+}
+
+.legendLabel {
+	font-size: 12px;
+	opacity: .5;
+}
+
+.handleIcon {
+	display: inline-block;
+	vertical-align: top;
+	margin-left: 4px;
+}
+
+.handleButton {
+	display: inline-flex;
+}

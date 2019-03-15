@@ -116,7 +116,7 @@ if( typeof window.Craft !== 'undefined' && window.Craft.username ) {
 	
 	function renderHandleButton() {
 		
-		var buttonVar = '<div class="handleButton btn submit">devMode</div>';
+		var buttonVar = '<div class="handleButton btn submit">fieldHandles</div>';
 		document.querySelector('.btn.submit').insertAdjacentHTML('beforeBegin', buttonVar);
 		
 		var showButton = document.querySelector('.handleButton');

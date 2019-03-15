@@ -32,38 +32,40 @@ function fetchFieldStorage() {
 				if( parsedField[0] == handle.value ) {
 					var fieldLink = '<a class="handleIcon" data-icon="settings" href="'+window.Craft.baseCpUrl+'/settings/fields/edit/'+parsedField[1]+'" target="_blank"></a>';
 					handle.parentNode.querySelector('legend').insertAdjacentHTML('beforeEnd', fieldLink);
-				}
-			});
- 		});
+		        }
+		    });
+		});
 	}
 }
 
 function renderSectionHandles() {
-	fields.forEach(function(field) {
-		var field = field.childNodes;
-		field.forEach(function(child) {
-			if( child.tagName === "SPAN" ) {
-				var fieldHandle = child.getAttribute("title");
-				child.parentNode.insertAdjacentHTML('beforeEnd', renderHandleHTML(fieldHandle));
-			}
-		});
-	});
+  fields.forEach(function(field) {
+      var field = field.childNodes;
+      field.forEach(function(child) {
+          if( child.tagName === "SPAN" ) {
+              var fieldHandle = child.getAttribute("title");
+              child.parentNode.insertAdjacentHTML('beforeEnd', renderHandleHTML(fieldHandle));
+              
+          }
+      });
+  });
   
-	document.querySelectorAll('.fld-tab').forEach(function(tab) {
-		tab.style.cssText = "height: auto;";
-	});
+  document.querySelectorAll('.fld-tab').forEach(function(tab) {
+      tab.style.cssText = "height: auto;";
+  });
 }
 
 function renderEntryHandles() {
-	fieldHeadings.forEach(function(fieldHeading) {
-		var fieldNodes = fieldHeading.childNodes;
-		fieldNodes.forEach(function(fieldNode) {
-			if( fieldNode.tagName == "LABEL" ) {
-				var fieldHandle = fieldNode.getAttribute("for").split('-').pop();
-				fieldNode.parentNode.insertAdjacentHTML('beforeEnd', renderHandleHTML(fieldHandle));
-			} 
-		}); 
-	});
+    fieldHeadings.forEach(function(fieldHeading) {
+        var fieldNodes = fieldHeading.childNodes;
+        fieldNodes.forEach(function(fieldNode) {
+            if( fieldNode.tagName == "LABEL" ) {
+                var fieldHandle = fieldNode.getAttribute("for").split('-').pop();
+                fieldNode.parentNode.insertAdjacentHTML('beforeEnd', renderHandleHTML(fieldHandle));
+                
+            } 
+        }); 
+    });
 }
 
 function copyHandles() {
@@ -71,18 +73,18 @@ function copyHandles() {
   var fieldHandles = document.querySelectorAll('.fieldHandle');
 	
 	fieldHandles.forEach(function(fieldHandle) {
-		fieldHandle.addEventListener('click', function(e) {
-			var legend = fieldHandle.parentNode.querySelector('.legendLabel');
-			var legendText = legend.textContent;
-
-			fieldHandle.select();
-			document.execCommand('copy');
-			legend.textContent = "Copied";
-
-			setTimeout(function() {
-				legend.textContent = legendLabel;
-			}, 300);
-		});
+	    fieldHandle.addEventListener('click', function(e) {
+				var legend = fieldHandle.parentNode.querySelector('.legendLabel');
+				var legendText = legend.textContent;
+				
+				fieldHandle.select();
+				document.execCommand('copy');
+				legend.textContent = "Copied";
+				
+				setTimeout(function() {
+					legend.textContent = legendLabel;
+				}, 300);
+	    });
 	});
 }
 

@@ -3,7 +3,6 @@ if( typeof window.Craft !== 'undefined' && window.Craft.username ) {
 	var fieldHeadings = document.querySelectorAll('#fields .field:not(#title-field) .heading');
 	
 	if( fields.length > 0 || fieldHeadings.length > 0 ){
-		console.log('Craft Field Handles initialized');
 		cpFieldHandles();
 	}
 }

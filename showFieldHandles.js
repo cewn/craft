@@ -3,11 +3,15 @@ if( typeof window.Craft !== 'undefined' && window.Craft.username ) {
 	var fieldHeadings = document.querySelectorAll('#fields .field:not(#title-field) .heading');
 	
 	if( fields.length > 0 || fieldHeadings.length > 0 ){
+		console.log('Craft Field Handles initialized');
 		cpFieldHandles();
 	}
 }
 
 function cpFieldHandles() {
+	
+	toggleButton();
+	
 	fetch(window.Craft.baseCpUrl+'/settings/fields')
   .then(function(response) {
       return response.text()
@@ -31,15 +35,12 @@ function cpFieldHandles() {
 	
   })
   .then(function() {
-  	renderHandleButton();
 		renderEntryHandles();
 		renderSectionHandles();
 
   })
   .then(function() {
   	createFieldLink();
-  })
-  .then(function() {
   	updateHandles();
   	copyHandles();
   })
@@ -130,7 +131,7 @@ function renderHandleHTML(value) {
 	return '<fieldset class="fieldset text"><legend><span class="legendLabel">Handle</span></legend><input class="fieldHandle" value="'+value+'" title="Click to copy" readonly="readonly"></fieldset>';
 }
 
-function renderHandleButton() {
+function toggleButton() {
 	var buttonVar = '<div class="handleButton btn submit">fieldHandles</div>';
 	document.querySelector('.btn.submit').insertAdjacentHTML('beforeBegin', buttonVar);
 	var showButton = document.querySelector('.handleButton');

@@ -45,6 +45,7 @@ function cpFieldHandles() {
   	createFieldLink();
   	updateHandles();
   	copyHandles();
+  	codeGenerators();
   })
   .catch(function() {
   	console.log('fieldHandles Error: Failed to fetch fieldData');
@@ -63,7 +64,7 @@ function createFieldLink() {
 					var fieldLink = '<a class="handleIcon" data-icon="settings" href="'+window.Craft.baseCpUrl+'/settings/fields/edit/'+parsedField[1]+'" target="_blank"></a>';
 					handle.parentNode.querySelector('legend').insertAdjacentHTML('beforeEnd', fieldLink);
 							if(parsedField[2].indexOf('Matrix') !== -1 ) {
-								var codeLink = '<span class="codeIcon" data-field-id="'+parsedField[1]+'"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path d="M24 10.935v2.131l-8 3.947v-2.23l5.64-2.783-5.64-2.79v-2.223l8 3.948zm-16 3.848l-5.64-2.783 5.64-2.79v-2.223l-8 3.948v2.131l8 3.947v-2.23zm7.047-10.783h-2.078l-4.011 16h2.073l4.016-16z"/></svg></span>';
+								var codeLink = '<span class="codeIcon" data-field-id="'+parsedField[1]+'"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="M20.59 12l-3.3-3.3a1 1 0 1 1 1.42-1.4l4 4a1 1 0 0 1 0 1.4l-4 4a1 1 0 0 1-1.42-1.4l3.3-3.3zM3.4 12l3.3 3.3a1 1 0 0 1-1.42 1.4l-4-4a1 1 0 0 1 0-1.4l4-4A1 1 0 0 1 6.7 8.7L3.4 12zm7.56 8.24a1 1 0 0 1-1.94-.48l4-16a1 1 0 1 1 1.94.48l-4 16z"/></svg></span>';
 								handle.parentNode.querySelector('legend').insertAdjacentHTML('beforeEnd', codeLink);
 							}
 					
@@ -73,6 +74,20 @@ function createFieldLink() {
 	} else {
 		console.log('fieldHandles: fields not found in localStorage');
 	}
+}
+
+function codeGenerators() {
+	var codeGenerators = document.querySelectorAll('.codeIcon');
+	document.addEventListener('click', function(e) {
+		if( e.target && e.target.className === 'codeIcon' ) {
+			var target = e.target;
+			var blockId = target.getAttribute('data-field-id');
+			var blockName = target.parentNode.parentNode.querySelector('.fieldHandle').value;
+			if( ! target.classList.contains('is-open') ) {
+				generateMatrixCode(blockId, blockName, target);	
+			}
+		}
+	});
 }
 
 function renderSectionHandles() {
@@ -98,20 +113,6 @@ function renderSectionHandles() {
 function renderEntryHandles() {
 	fields = document.querySelectorAll('.fld-field');
 	fieldHeadings = document.querySelectorAll('#fields .field:not(#title-field) .heading');
-	
-	codeGenerators = document.querySelectorAll('.codeIcon');
-	document.addEventListener('click', function(e) {
-		if( e.target && e.target.className === 'codeIcon' ) {
-			var target = e.target;
-			var blockId = target.getAttribute('data-field-id');
-			var blockName = target.parentNode.parentNode.querySelector('.fieldHandle').value;
-			if( target.parentNode.parentNode.querySelector('.matrixCode') ) {
-				target.parentNode.parentNode.querySelector('.matrixCode').remove();
-			} else {
-				generateMatrixCode(blockId, blockName, target);	
-			}	
-		}
-	});
 
   fieldHeadings.forEach(function(fieldHeading) {
     var fieldNodes = fieldHeading.childNodes;
@@ -213,28 +214,30 @@ function generateMatrixCode(blockId, blockName, target) {
 	  })
 		.then(function() {
 		    var blockFieldData;
-		    matrixCode += '{% for block in '+blockName+' %} \n';
+		    matrixCode += '{% for block in '+blockName+' %}<br>';
 				matrixData.forEach(function(data, index) {
 				var blockType = data[0];
 				var blockFields = data[1];
 				var blockFieldData = [];
 				if( blockFields ) {
 					blockFields.forEach(function(blockField) {
-						blockFieldData +=  '\xa0\xa0{{ block.' + blockField.replace(/^\s+|\s+$/g, '') + ' }} \n';
+						blockFieldData +=  '\xa0\xa0{{ block.' + blockField.replace(/^\s+|\s+$/g, '') + ' }}<br>';
 		            });
 		        }
 				if( index === 0 ) {
-					matrixCode += '\xa0{% if block.type == \''+blockType+'\' %} \n' + blockFieldData;
+					matrixCode += '\xa0{% if block.type == \''+blockType+'\' %}<br>' + blockFieldData;
 		        } else if( index <= data.length ) {
-					matrixCode += '\xa0{% elseif block.type == \''+blockType+'\' %} \n' + blockFieldData;
+					matrixCode += '\xa0{% elseif block.type == \''+blockType+'\' %}<br>' + blockFieldData;
 		        }
 		    });
-			matrixCode += '\xa0{% endif %} \n';
+			matrixCode += '\xa0{% endif %}<br>';
 			matrixCode += '{% endfor %}';
 		})
 		.then(function() {
 			if( ! target.parentNode.parentNode.querySelector('.matrixCode') ) {
-				target.parentNode.parentNode.insertAdjacentHTML('beforeEnd', '<textarea class="matrixCode" spellcheck="false" readonly="readonly">'+matrixCode+'</textarea>');
+				target.parentNode.parentNode.insertAdjacentHTML('beforeEnd', '<code class="matrixCode" spellcheck="false" readonly="readonly">'+matrixCode+'</code>');
+			} else {
+				target.parentNode.parentNode.querySelector('.matrixCode').remove();
 			}
 		});
 }

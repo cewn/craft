@@ -1,0 +1,11 @@
+{% set text = text %}
+{% set wordsPerMinute = 200 %}
+{% set readTime = (text ? (text|split(' ')|length / wordsPerMinute)|round(0, 'ceil') : null) %}
+{% set visible = (visible ? visible : true) %}
+
+{% if readTime is defined and readTime|length and visible %}
+    {% from '@plegtvos/shared/icon/icon.twig' import icon %}
+    <span class="newsDetail__readTime">
+        {{ icon('clock') }}{{readTime}} {{ readTime <= 1 ? 'minuut'|translate : 'minuten'|translate }} {{ 'leestijd'|translate }}.
+    </span>
+{% endif %}

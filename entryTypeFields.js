@@ -1,5 +1,5 @@
 var entryTypeUrls = [];
-var fields = {};
+var fields = [];
 var responses = [];
 
 fetch(window.Craft.baseCpUrl + '/settings/sections/')
@@ -38,7 +38,7 @@ function getEntryTypeFields(url) {
 			if (fieldTabsEl.length) {
               fieldTabsEl.forEach(function(fieldTab) {
 
-			var tabFields = [];
+				var tabFields = [];
                 fieldTabs = {
 					...fieldTabs,
 					[fieldTab.querySelector('.tab span').textContent]: tabFields 
@@ -50,10 +50,9 @@ function getEntryTypeFields(url) {
               });
 
 			if(handle) {
-				fields = {
-					...fields,
-					[handle.value]: fieldTabs
-                }
+				fields.push({
+                	[handle.value]: fieldTabs
+                })
     		}
 
             
@@ -63,8 +62,6 @@ function getEntryTypeFields(url) {
             responses.length === entryTypeUrls.length && responses.map((response, idx) => {
                 if( response === 200 && idx === entryTypeUrls.length-1 ) {
                   var reponseEl = document.createElement("code"); 
-                  reponseEl.innerHTML = fields;
-                  document.body.appendChild(reponseEl); 
 				  reponseEl.style = `
 					position: fixed;
 					padding: 32px;
@@ -75,7 +72,10 @@ function getEntryTypeFields(url) {
 					max-height: calc(100vh - 64px);
 					overflow: auto;
 					`;
-					console.log(fields.sort());
+					fields.map(field => {
+						console.log(field);
+                     });
+                    document.body.appendChild(reponseEl); 
                 }
             });
     	});

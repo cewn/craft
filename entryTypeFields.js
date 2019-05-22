@@ -1,4 +1,7 @@
 var entryTypeUrls = [];
+var fields = [];
+var responses = [];
+
 fetch(window.Craft.baseCpUrl + '/settings/sections/')
 	  .then(function(response) {
 	    return response.text();
@@ -21,7 +24,8 @@ fetch(window.Craft.baseCpUrl + '/settings/sections/')
 
 function getEntryTypeFields(url) {
 	fetch(url)
-      .then(function(response) {
+      .then(function(response, url) {
+			responses.push(response.status);
             return response.text();
           })
           .then(function(html) {
@@ -31,16 +35,23 @@ function getEntryTypeFields(url) {
             var fieldTabs = htmlResponse.querySelectorAll('.fld-tabs .fld-tab');
 
 			if(handle) {
-				console.log(handle.value);
+				fields.push(handle.value);
     		}
 
             if (fieldTabs.length) {
               fieldTabs.forEach(function(fieldTab) {
-                console.log('\xa0' + fieldTab.querySelector('.tab span').textContent);
+                fields.push('\xa0' + fieldTab.querySelector('.tab span').textContent);
 				fieldTab.querySelectorAll('.fld-field > span').forEach(field => {
-					console.log('\xa0\xa0' +field.title);
+					fields.push('\xa0\xa0' +field.title);
                 });
               });
             }
           })
+		.then(ready => {				
+            responses.length === entryTypeUrls.length && responses.map((response, idx) => {
+                if( response === 200 && idx === entryTypeUrls.length-1 ) {
+					console.log(fields);
+                }
+            });
+    	});
 }

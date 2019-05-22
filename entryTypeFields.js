@@ -35,22 +35,34 @@ function getEntryTypeFields(url) {
             var fieldTabs = htmlResponse.querySelectorAll('.fld-tabs .fld-tab');
 
 			if(handle) {
-				fields.push(handle.value);
+				fields.push(handle.value + '<br />');
     		}
 
             if (fieldTabs.length) {
               fieldTabs.forEach(function(fieldTab) {
-                fields.push('\xa0' + fieldTab.querySelector('.tab span').textContent);
+                fields.push('\xa0\xa0' + fieldTab.querySelector('.tab span').textContent + '<br />');
 				fieldTab.querySelectorAll('.fld-field > span').forEach(field => {
-					fields.push('\xa0\xa0' +field.title);
+					fields.push('\xa0\xa0\xa0\xa0' + field.title + '<br />');
                 });
               });
+            } else {
+				fields.push('\xa0\xa0\xa0\xa0' + '<span style="color: red;">No fields</span><br>');
             }
           })
 		.then(ready => {				
             responses.length === entryTypeUrls.length && responses.map((response, idx) => {
                 if( response === 200 && idx === entryTypeUrls.length-1 ) {
-					console.log(fields);
+                  var reponseEl = document.createElement("code"); 
+                  reponseEl.innerHTML = fields.join('');
+                  document.body.appendChild(reponseEl); 
+				  reponseEl.style = `
+					position: fixed;
+					padding: 32px;
+					top: 0;
+					z-index: 500;
+					background: black;
+					color: white;
+					`;
                 }
             });
     	});

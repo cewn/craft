@@ -1,5 +1,5 @@
 var entryTypeUrls = [];
-var fields = [];
+var fields = {};
 var responses = [];
 
 fetch(window.Craft.baseCpUrl + '/settings/sections/')
@@ -32,28 +32,38 @@ function getEntryTypeFields(url) {
             var parser = new DOMParser();
             var htmlResponse = parser.parseFromString(html, 'text/html');
 			var handle = htmlResponse.querySelector('#handle');
-            var fieldTabs = htmlResponse.querySelectorAll('.fld-tabs .fld-tab');
+            var fieldTabsEl = htmlResponse.querySelectorAll('.fld-tabs .fld-tab');
+			var fieldTabs = {};
+
+			if (fieldTabsEl.length) {
+              fieldTabsEl.forEach(function(fieldTab) {
+
+			var tabFields = [];
+                fieldTabs = {
+					...fieldTabs,
+					[fieldTab.querySelector('.tab span').textContent]: tabFields 
+                }
+				fieldTab.querySelectorAll('.fld-field > span').forEach(field => {
+					tabFields.push(field.title);
+                });
+
+              });
 
 			if(handle) {
-				fields.push(handle.value + '<br />');
+				fields = {
+					...fields,
+					[handle.value]: fieldTabs
+                }
     		}
 
-            if (fieldTabs.length) {
-              fieldTabs.forEach(function(fieldTab) {
-                fields.push('\xa0\xa0' + fieldTab.querySelector('.tab span').textContent + '<br />');
-				fieldTab.querySelectorAll('.fld-field > span').forEach(field => {
-					fields.push('\xa0\xa0\xa0\xa0' + field.title + '<br />');
-                });
-              });
-            } else {
-				fields.push('\xa0\xa0\xa0\xa0' + '<span style="color: red;">No fields</span><br>');
+            
             }
           })
 		.then(ready => {				
             responses.length === entryTypeUrls.length && responses.map((response, idx) => {
                 if( response === 200 && idx === entryTypeUrls.length-1 ) {
                   var reponseEl = document.createElement("code"); 
-                  reponseEl.innerHTML = fields.join('');
+                  reponseEl.innerHTML = fields;
                   document.body.appendChild(reponseEl); 
 				  reponseEl.style = `
 					position: fixed;
@@ -62,7 +72,10 @@ function getEntryTypeFields(url) {
 					z-index: 500;
 					background: black;
 					color: white;
+					max-height: calc(100vh - 64px);
+					overflow: auto;
 					`;
+					console.log(fields.sort());
                 }
             });
     	});

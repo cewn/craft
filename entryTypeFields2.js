@@ -66,7 +66,7 @@ function getEntryTypeFields(url) {
 				  responseEl.style = `
 					position: fixed;
 					padding: 32px;
-					top: 0;
+					bottom: 0;
 					z-index: 500;
 					background: black;
 					color: white;
@@ -74,14 +74,21 @@ function getEntryTypeFields(url) {
 					overflow: auto;
 					`;
 					Object.entries(fields).map(field => {
-						let fields = [];
+						let fieldData = [];
 						Object.entries(field[1]).map(data => {
-							fields.push(data);
-						});
+							fieldData.push(data);
+						}).join('');
 
 						responseEl.innerHTML += `
 							${field[0]}<br>
-							${fields.join('')}<br>
+							${fieldData.map(data => {
+								return (
+									`\xa0\xa0` + data[0] + `<br />` +
+									data[1].map(field => {
+										return `\xa0\xa0\xa0\xa0` + field + `<br />`
+                                    }).join('')
+								);							
+							}).join('')}<br>
 						`;
                     });
                     document.body.appendChild(responseEl); 

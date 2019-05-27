@@ -80,10 +80,10 @@ function getEntryTypeFields(url) {
 						sectionFields.push(fields);
                       }	
                       responseEl.innerHTML +=
-						sectionHandle + '<br / >' +
+						'<span style="color: limegreen;">Type: ' + sectionHandle + '</span><br / >' +
 						sectionFields.map(sectionField => {
 							return ( 
-								'\xa0\xa0' + sectionField[0] + '<br />' +
+								'\xa0\xa0' + '<span style="color: orangered;">Tab: ' + sectionField[0] + '</span><br />' +
 								sectionField[1].map(fields => {
 									return '\xa0\xa0\xa0\xa0' + fields + '<br />'
                                 }).join('')

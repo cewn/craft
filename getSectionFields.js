@@ -1,5 +1,5 @@
 var entryTypeUrls = [];
-var fields = [];
+var sections = {};
 var responses = [];
 
 fetch(window.Craft.baseCpUrl + '/settings/sections/')
@@ -18,7 +18,7 @@ fetch(window.Craft.baseCpUrl + '/settings/sections/')
 	  })
 		.then(done => {
 			entryTypeUrls.forEach(entryTypeUrl => {
-				getEntryTypeFields(entryTypeUrl);
+				return getEntryTypeFields(entryTypeUrl);
             });
         });
 
@@ -50,9 +50,10 @@ function getEntryTypeFields(url) {
               });
 
 			if(handle) {
-				fields.push({
+				sections = {
+					...sections,
                 	[handle.value]: fieldTabs
-                })
+                }
     		}
 
             
@@ -61,21 +62,37 @@ function getEntryTypeFields(url) {
 		.then(ready => {				
             responses.length === entryTypeUrls.length && responses.map((response, idx) => {
                 if( response === 200 && idx === entryTypeUrls.length-1 ) {
-                  var reponseEl = document.createElement("code"); 
-				  reponseEl.style = `
-					position: fixed;
-					padding: 32px;
-					top: 0;
-					z-index: 500;
-					background: black;
-					color: white;
-					max-height: calc(100vh - 64px);
-					overflow: auto;
-					`;
-					fields.map(field => {
-						console.log(field);
-                     });
-                    document.body.appendChild(reponseEl); 
+                  var responseEl = document.createElement("code"); 
+				  responseEl.style = 
+					'position: fixed;' +
+					'padding: 32px;' +
+					'bottom: 0;' +
+					'z-index: 500;' +
+					'background: black;' +
+					'color: white;' +
+					'max-height: calc(100vh - 64px);' +
+					'overflow: auto;';
+
+                   	for (let [key, values] of Object.entries(sections).sort()) {
+					  let sectionHandle = key;
+					  let sectionFields = [];
+    				  for (let fields of Object.entries(values).sort()) {
+						sectionFields.push(fields);
+                      }	
+                      responseEl.innerHTML += `
+						${sectionHandle}<br>
+						${sectionFields.map(sectionField => {
+							return ( 
+								`\xa0\xa0` + sectionField[0] + '<br />' +
+								sectionField[1].map(fields => {
+									return `\xa0\xa0\xa0\xa0` + fields + '<br />'
+                                }).join('')
+							);
+						}).join('')}<br />
+					  `;
+                    }
+
+                    document.body.appendChild(responseEl); 
                 }
             });
     	});

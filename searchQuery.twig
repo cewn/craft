@@ -1,0 +1,26 @@
+{% set searchFields = [
+    'title',
+    'projectLocation',
+    'projectClient',
+    'projectPeriod',
+    'projectSize',
+    'projectDescription',
+    'projectText',
+    'projectType',
+    'projectCategories',
+    'projectLivingText',
+    'projectLivingDescription'
+] %}
+
+{% set searchQuery %}
+  {% for searchField in searchFields %}
+      {{- not loop.first ? ' OR ' -}}
+      {{- searchField ~ ':' ~ query -}}
+  {% endfor %}
+{% endset %}
+
+{# Sample #}
+{% set projectEntries = craft.entries({
+    section: 'entries',
+    search: searchQuery|trim,
+}) %}
